@@ -288,5 +288,3 @@ sam deploy \
 # Creating a new Policy
 aws iam create-policy --policy-name my-bad-policy --policy-document file://badpolicy.json
 ```
-
-**NOTE**: Alternatively this could be part of package.json scripts section.
