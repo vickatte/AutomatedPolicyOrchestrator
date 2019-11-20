@@ -1,9 +1,8 @@
-# Automated security orchestrator with AWS Step Fucntions
+# Automated security orchestrator with AWS Step Functions
 
 This is a SAM template for an Automated policy orchestrator - Below is an explanation of how to deploy the template and build the Step Function state machine:
 
-![Applicaiton Architecture](https://raw.githubusercontent.com/bls20AWS/AutomatedPolicyOrchestrator/master/src/img/architecture.png)
-
+![Application Architecture](https://raw.githubusercontent.com/bls20AWS/AutomatedPolicyOrchestrator/master/src/img/architecture.png)
 
 ```bash
 .
@@ -23,16 +22,14 @@ This is a SAM template for an Automated policy orchestrator - Below is an explan
 
 ##### Option 1: Deploy from the Serverless application repository (preferred)
 
-
 [![button](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/serverlessrepo/home?region=us-east-1#/available-applications)
 
- :lock:**NOTE**: Note This is a private applicaiton in the Servlerless Applicaiton Repository (SAR), in order to deploy from SAR You must have been granted access.
-
+ :lock:**NOTE**: Note This is a private applicaiton in the Serverless Applicaiton Repository (SAR), in order to deploy from SAR You must have been granted access.
 
 ---
 
 ##### Option 2: clone, package and deploy
-follow the instructions below in order to deploy from this repository
+Follow the instructions below in order to deploy from this repository:
 Clone this repo to your local machine using `https://github.com/bls20AWS/AutomatedPolicyOrchestrator`
 
 Firstly, we need a `S3 bucket` where we can upload our Lambda functions packaged as ZIP before we deploy anything - If you don't have a S3 bucket to store code artifacts then this is a good time to create one:
