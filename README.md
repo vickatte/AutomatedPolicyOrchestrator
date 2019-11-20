@@ -17,6 +17,15 @@ This is a SAM template for an Automated policy orchestrator - Below is an explan
 
 ## Packaging and deployment
 
+Deploy directly from the Serverless application repository
+[![button](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/serverlessrepo/home?region=us-east-1#/available-applications)
+
+
+
+
+Or follow the instructions below in order to deploy from this repository
+Clone this repo to your local machine using `https://github.com/bls20AWS/AutomatedPolicyOrchestrator`
+
 Firstly, we need a `S3 bucket` where we can upload our Lambda functions packaged as ZIP before we deploy anything - If you don't have a S3 bucket to store code artifacts then this is a good time to create one:
 
 ```bash

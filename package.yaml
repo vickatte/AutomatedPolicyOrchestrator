@@ -8,7 +8,7 @@ Description: 'policy-change-alert
 Parameters:
   EmailAddress:
     Type: String
-    Default: benbo4@hotmail.com
+    Default: ' '
     Description: (Required) The email address to notify on policy issues.
   restrictedActions:
     Type: String
@@ -18,7 +18,7 @@ Resources:
   RecieveUserAPI:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://policybuildersession/287138580d050d8488c11c4d48247799
+      CodeUri: s3://policybuildersession/44d608611f420e493d6b6a7517932d36
       Handler: index.handler
       Runtime: nodejs8.10
       Events:
@@ -35,7 +35,7 @@ Resources:
   ValidatePolicy:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://policybuildersession/b5a2ff3c5679511ddf0a1ba047729af1
+      CodeUri: s3://policybuildersession/1c8ae07f97f56d6a7f1cddd245f27d8c
       Handler: app.handler
       Runtime: nodejs10.x
       Environment:
@@ -45,7 +45,7 @@ Resources:
   RevertPolicy:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://policybuildersession/01848986d7b42bc5d4f47f358a3bce8b
+      CodeUri: s3://policybuildersession/0a6daae116d2fce8815788a4d0c94b80
       Handler: app.handler
       Runtime: nodejs10.x
       Environment:
@@ -55,7 +55,7 @@ Resources:
   AskUser:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://policybuildersession/1270ffe8c16c275da0e46de272dfaab2
+      CodeUri: s3://policybuildersession/65ccfed256cb6313d8e52313b249c5bf
       Handler: app.handler
       Runtime: nodejs10.x
       Environment:
@@ -71,7 +71,7 @@ Resources:
   PolicyChangerApprove:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://policybuildersession/94c04e661b032656e00725cf264c33f6
+      CodeUri: s3://policybuildersession/8b7d593701db73da27ae14009b14764b
       Handler: app.handler
       Runtime: nodejs10.x
       Environment:
@@ -115,8 +115,8 @@ Resources:
           \         \"Variable\": \"$.taskresult.action\",\n          \"StringEquals\"\
           : \"allow\",\n          \"Next\": \"approved\"\n        }\n      ],\n  \
           \    \"Default\": \"denied\"\n    },\n\n    \"denied\": {\n      \"Type\"\
-          : \"Pass\",\n      \"End\":true\n    },\n\n    \"approved\": {\n      \"\
-          Type\": \"Task\",\n      \"Resource\": \"arn:aws:lambda:us-east-1:981723798357:function:policyChangerApprove\"\
+          : \"Pass\",\n    },v\n\n    \"approved\": {\n      \"Type\": \"Task\",\n\
+          \      \"Resource\": \"arn:aws:lambda:us-east-1:981723798357:function:policyChangerApprove\"\
           ,\n      \"TimeoutSeconds\": 3600,\n      \"End\": true\n\n    }\n  }\n}"
       RoleArn:
         Fn::GetAtt:
@@ -164,6 +164,27 @@ Resources:
           - lambda:InvokeFunction
           Resource:
             Fn::GetAtt:
+            - AskUser
+            - Arn
+        - Effect: Allow
+          Action:
+          - lambda:InvokeFunction
+          Resource:
+            Fn::GetAtt:
+            - RecieveUserAPI
+            - Arn
+        - Effect: Allow
+          Action:
+          - lambda:InvokeFunction
+          Resource:
+            Fn::GetAtt:
+            - PolicyChangerApprove
+            - Arn
+        - Effect: Allow
+          Action:
+          - lambda:InvokeFunction
+          Resource:
+            Fn::GetAtt:
             - RevertPolicy
             - Arn
         - Effect: Allow
@@ -199,7 +220,8 @@ Resources:
   EmailSubscription:
     Type: AWS::SNS::Subscription
     Properties:
-      Endpoint: benbo4@hotmail.com
+      Endpoint:
+        Ref: restrictedActions
       Protocol: email
       TopicArn:
         Ref: AlertTopic

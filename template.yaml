@@ -8,7 +8,7 @@ Description: >
 Parameters:
   EmailAddress:
     Type: String
-    Default: "benbo4@hotmail.com"
+    Default: " "
     Description: (Required) The email address to notify on policy issues.
   restrictedActions:
     Type: String
@@ -171,8 +171,7 @@ Resources:
 
               "denied": {
                 "Type": "Pass",
-                "End":true
-              },
+              },v
 
               "approved": {
                 "Type": "Task",
@@ -222,6 +221,18 @@ Resources:
           - Effect: Allow
             Action:
               - "lambda:InvokeFunction"
+            Resource: !GetAtt AskUser.Arn  
+          - Effect: Allow
+            Action:
+              - "lambda:InvokeFunction"
+            Resource: !GetAtt RecieveUserAPI.Arn    
+          - Effect: Allow
+            Action:
+              - "lambda:InvokeFunction"
+            Resource: !GetAtt PolicyChangerApprove.Arn
+          - Effect: Allow
+            Action:
+              - "lambda:InvokeFunction"
             Resource: !GetAtt RevertPolicy.Arn
           - Effect: Allow
             Action:
@@ -256,7 +267,7 @@ Resources:
   EmailSubscription:
     Type: AWS::SNS::Subscription
     Properties:
-      Endpoint: 'benbo4@hotmail.com'
+      Endpoint: !Ref 'restrictedActions'
       Protocol: email
       TopicArn: !Ref 'AlertTopic'
 ###OUTPUTS######
