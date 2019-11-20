@@ -24,12 +24,12 @@ This is a SAM template for an Automated policy orchestrator - Below is an explan
 
 
 
-* Note This is a private applicaiton in the Servlerless Applicaiton Repository (SAR), in order to deploy from SAR You must have been granted access *
+ :lock:**NOTE**: Note This is a private applicaiton in the Servlerless Applicaiton Repository (SAR), in order to deploy from SAR You must have been granted access.
 
 
 ---
 
-##### Option 2 - clone, package and deploy
+##### Option 2: clone, package and deploy
 follow the instructions below in order to deploy from this repository
 Clone this repo to your local machine using `https://github.com/bls20AWS/AutomatedPolicyOrchestrator`
 
@@ -258,31 +258,37 @@ Here are a few things you can try to get more acquainted with building serverles
 Next, you can use AWS Serverless Application Repository to deploy ready to use Apps that go beyond hello world samples and learn how authors developed their applications: [AWS Serverless Application Repository main page](https://aws.amazon.com/serverless/serverlessrepo/)
 
 # Appendix
-
-## Building the project
-
-[AWS Lambda requires a flat folder](https://docs.aws.amazon.com/lambda/latest/dg/nodejs-create-deployment-pkg.html) with the application as well as its dependencies in a node_modules folder. When you make changes to your source code or dependency manifest,
-run the following command to build your project local testing and deployment:
-
-```bash
-sam build
-```
-
-If your dependencies contain native modules that need to be compiled specifically for the operating system running on AWS Lambda, use this command to build inside a Lambda-like Docker container instead:
-```bash
-sam build --use-container
-```
-
-By default, this command writes built artifacts to `.aws-sam/build` folder.
-
 ## SAM and AWS CLI commands
 
 All commands used throughout this document
 
 ```bash
-# Invoke function locally with event.json as an input
-sam local invoke HelloWorldFunction --event event.json
+# create a bucket
+aws s3 mb s3://BUCKET_NAME
+```
 
+```bash
+# Build and package application
+sam build && sam package \
+--output-template-file package.yaml \
+--s3-bucket BUCKET_NAME
+```
+
+Next, the following command will create a Cloudformation Stack and deploy your SAM resources.
+
+```bash
+# Deploy SAM application
+sam deploy \
+    --template-file package.yaml \
+    --stack-name sam-app \
+    --capabilities CAPABILITY_NAMED_IAM \
+    --parameter-overrides EmailAddress={YOUR-EMAIL-ADDRESS}
+
+```
+
+```bash
+# Creating a new Policy
+aws iam create-policy --policy-name my-bad-policy --policy-document file://badpolicy.json
 ```
 
 **NOTE**: Alternatively this could be part of package.json scripts section.
