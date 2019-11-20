@@ -39,8 +39,6 @@ Firstly, we need a `S3 bucket` where we can upload our Lambda functions packaged
 aws s3 mb s3://BUCKET_NAME
 ```
 
-Next, run the following command to package our Lambda function to S3:
-
 ```bash
 
 sam build && sam package \
