@@ -2,11 +2,16 @@
 
 This is a SAM template for an Automated policy orchestrator - Below is an explanation of how to deploy the template and build the Step Function state machine:
 
+[Screenshot]: https://github.com/bls20AWS/AutomatedPolicyOrchestrator/src/images/architecture.png "Applicaiton Architecture"
+
+architecture
+
 ```bash
 .
 ├── README.MD                   <-- This instructions file
-├── event.json                  <-- API Gateway Proxy Integration event payload
 ├── hello-world                 <-- Source code for a lambda function
+├── src
+│   └── askUser                 <-- Source code for a lambda function
 │   └── app.js                  <-- Lambda function code
 │   └── package.json            <-- NodeJS dependencies and scripts
 │   └── tests                   <-- Unit tests
@@ -21,8 +26,6 @@ This is a SAM template for an Automated policy orchestrator - Below is an explan
 
 
 [![button](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/serverlessrepo/home?region=us-east-1#/available-applications)
-
-
 
  :lock:**NOTE**: Note This is a private applicaiton in the Servlerless Applicaiton Repository (SAR), in order to deploy from SAR You must have been granted access.
 
