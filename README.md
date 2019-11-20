@@ -2,7 +2,7 @@
 
 This is a SAM template for an Automated policy orchestrator - Below is an explanation of how to deploy the template and build the Step Function state machine:
 
-[Screenshot]: https://raw.githubusercontent.com/bls20AWS/AutomatedPolicyOrchestrator/master/src/img/architecture.png?token=AB5CUU4S75KOIVDE2GJOUDK52VAN4 "Applicaiton Architecture"
+![Applicaiton Architecture](https://raw.githubusercontent.com/bls20AWS/AutomatedPolicyOrchestrator/master/src/img/architecture.png?token=AB5CUU4S75KOIVDE2GJOUDK52VAN4)
 
 architecture
 
