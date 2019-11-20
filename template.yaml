@@ -43,6 +43,16 @@ Resources:
       Environment:
         Variables:
           restrictedActions: !Ref "restrictedActions"
+  
+  PolicyChangerApprove:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/policyChangerApprove
+      Handler: app.handler
+      Runtime: nodejs10.x
+      Environment:
+        Variables:
+          restrictedActions: !Ref "restrictedActions"
 
   RevertPolicy:
     Type: AWS::Serverless::Function
@@ -68,17 +78,6 @@ Resources:
             Fn::Sub: "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/dev/allow"
           APIDenyEndpoint:
             Fn::Sub: "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/dev/deny"
-
-  PolicyChangerApprove:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: src/policyChangerApprove
-      Handler: app.handler
-      Runtime: nodejs10.x
-      Environment:
-        Variables:
-          restrictedActions: !Ref "restrictedActions"
-
   StateMachine:
     Type: "AWS::StepFunctions::StateMachine"
     Properties:
@@ -169,14 +168,13 @@ Resources:
 
             "denied": {
               "Type": "Pass",
-            },v
+              "End": true
+            },
 
             "approved": {
               "Type": "Task",
-              "Resource": "arn:aws:lambda:us-east-1:981723798357:function:policyChangerApprove",
-              "TimeoutSeconds": 3600,
+              "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${policyChangerApprove}",              
               "End": true
-
             }
           }
         }
@@ -202,26 +200,32 @@ Resources:
                 Action:
                   - "lambda:InvokeFunction"
                 Resource: !GetAtt ValidatePolicy.Arn
+
               - Effect: Allow
                 Action:
                   - "lambda:InvokeFunction"
                 Resource: !GetAtt AskUser.Arn
+
               - Effect: Allow
                 Action:
                   - "lambda:InvokeFunction"
                 Resource: !GetAtt RecieveUserAPI.Arn
+
               - Effect: Allow
                 Action:
                   - "lambda:InvokeFunction"
                 Resource: !GetAtt PolicyChangerApprove.Arn
+
               - Effect: Allow
                 Action:
                   - "lambda:InvokeFunction"
                 Resource: !GetAtt RevertPolicy.Arn
+
               - Effect: Allow
                 Action:
                   - "sns:Publish"
                 Resource: !Ref AlertTopic
+                
   CloudwatchEventsExecutionRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -232,15 +236,15 @@ Resources:
             Principal:
               Service: events.amazonaws.com
             Action: "sts:AssumeRole"
-      Policies:
-        - PolicyName: StartStepFunctions
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action:
-                  - states:StartExecution
-                Resource: !Ref StateMachine
+        Policies:
+          - PolicyName: StartStepFunctions
+            PolicyDocument:
+              Version: 2012-10-17
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - states:StartExecution
+                  Resource: !Ref StateMachine
 
   IAMEventRule:
     Type: AWS::Events::Rule

@@ -115,9 +115,9 @@ Resources:
           \         \"Variable\": \"$.taskresult.action\",\n          \"StringEquals\"\
           : \"allow\",\n          \"Next\": \"approved\"\n        }\n      ],\n  \
           \    \"Default\": \"denied\"\n    },\n\n    \"denied\": {\n      \"Type\"\
-          : \"Pass\",\n    },v\n\n    \"approved\": {\n      \"Type\": \"Task\",\n\
-          \      \"Resource\": \"arn:aws:lambda:us-east-1:981723798357:function:policyChangerApprove\"\
-          ,\n      \"TimeoutSeconds\": 3600,\n      \"End\": true\n\n    }\n  }\n}"
+          : \"Pass\"\n    },\n\n    \"approved\": {\n      \"Type\": \"Task\",\n \
+          \     \"Resource\": \"arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${policyChangerApprove}\"\
+          ,\n      \"End\": true\n    }\n  }\n}"
       RoleArn:
         Fn::GetAtt:
         - StatesExecutionRole
@@ -133,51 +133,51 @@ Resources:
             Service:
             - Fn::Sub: states.${AWS::Region}.amazonaws.com
           Action: sts:AssumeRole
-        Policies:
-        - PolicyName: StateMachineTasks
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-            - Effect: Allow
-              Action:
-              - lambda:InvokeFunction
-              Resource:
-                Fn::GetAtt:
-                - ValidatePolicy
-                - Arn
-            - Effect: Allow
-              Action:
-              - lambda:InvokeFunction
-              Resource:
-                Fn::GetAtt:
-                - AskUser
-                - Arn
-            - Effect: Allow
-              Action:
-              - lambda:InvokeFunction
-              Resource:
-                Fn::GetAtt:
-                - RecieveUserAPI
-                - Arn
-            - Effect: Allow
-              Action:
-              - lambda:InvokeFunction
-              Resource:
-                Fn::GetAtt:
-                - PolicyChangerApprove
-                - Arn
-            - Effect: Allow
-              Action:
-              - lambda:InvokeFunction
-              Resource:
-                Fn::GetAtt:
-                - RevertPolicy
-                - Arn
-            - Effect: Allow
-              Action:
-              - sns:Publish
-              Resource:
-                Ref: AlertTopic
+      Policies:
+      - PolicyName: StateMachineTasks
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Effect: Allow
+            Action:
+            - lambda:InvokeFunction
+            Resource:
+              Fn::GetAtt:
+              - ValidatePolicy
+              - Arn
+          - Effect: Allow
+            Action:
+            - lambda:InvokeFunction
+            Resource:
+              Fn::GetAtt:
+              - AskUser
+              - Arn
+          - Effect: Allow
+            Action:
+            - lambda:InvokeFunction
+            Resource:
+              Fn::GetAtt:
+              - RecieveUserAPI
+              - Arn
+          - Effect: Allow
+            Action:
+            - lambda:InvokeFunction
+            Resource:
+              Fn::GetAtt:
+              - PolicyChangerApprove
+              - Arn
+          - Effect: Allow
+            Action:
+            - lambda:InvokeFunction
+            Resource:
+              Fn::GetAtt:
+              - RevertPolicy
+              - Arn
+          - Effect: Allow
+            Action:
+            - sns:Publish
+            Resource:
+              Ref: AlertTopic
   CloudwatchEventsExecutionRole:
     Type: AWS::IAM::Role
     Properties:
