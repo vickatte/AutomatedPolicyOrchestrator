@@ -8,15 +8,15 @@ This is a SAM template for an Automated policy orchestrator - Below is an explan
 ```bash
 .
 ├── README.MD                   <-- This instructions file
-├── hello-world                 <-- Source code for a lambda function
 ├── src
-│   └── askUser                 <-- Source code for a lambda function
-│   └── app.js                  <-- Lambda function code
-│   └── package.json            <-- NodeJS dependencies and scripts
-│   └── tests                   <-- Unit tests
-│       └── unit
-│           └── test-handler.js
+│   └── askUser                 <-- Source code for askUser lambda function
+│   └── PolicyChangeApprove     <-- Source code for PolicyChangeApprove lambda function
+│   └── RecieveUserAPI          <-- Source code for RecieveUserAPI lambda function
+│   └── RevertPolicy            <-- Source code for RevertPolicy lambda function
+│   └── ValidatePolicy          <-- Source code for ValidatePolicy lambda function
 ├── template.yaml               <-- SAM template
+├── package.json                <-- SAM package
+├── padpolicy.json              <-- Example policy document
 ```
 
 ## Set up
