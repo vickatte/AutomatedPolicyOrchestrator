@@ -193,36 +193,35 @@ Resources:
               Service:
                 - !Sub states.${AWS::Region}.amazonaws.com
             Action: "sts:AssumeRole"
-        Policies:
-          - PolicyName: StateMachineTasks
-            PolicyDocument:
-              Version: 2012-10-17
-              Statement:
-                - Effect: Allow
-                  Action:
-                    - "lambda:InvokeFunction"
-                  Resource: !GetAtt ValidatePolicy.Arn
-                - Effect: Allow
-                  Action:
-                    - "lambda:InvokeFunction"
-                  Resource: !GetAtt AskUser.Arn
-                - Effect: Allow
-                  Action:
-                    - "lambda:InvokeFunction"
-                  Resource: !GetAtt RecieveUserAPI.Arn
-                - Effect: Allow
-                  Action:
-                    - "lambda:InvokeFunction"
-                  Resource: !GetAtt PolicyChangerApprove.Arn
-                - Effect: Allow
-                  Action:
-                    - "lambda:InvokeFunction"
-                  Resource: !GetAtt RevertPolicy.Arn
-                - Effect: Allow
-                  Action:
-                    - "sns:Publish"
-                  Resource: !Ref AlertTopic
-
+      Policies:
+        - PolicyName: StateMachineTasks
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: !GetAtt ValidatePolicy.Arn
+              - Effect: Allow
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: !GetAtt AskUser.Arn
+              - Effect: Allow
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: !GetAtt RecieveUserAPI.Arn
+              - Effect: Allow
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: !GetAtt PolicyChangerApprove.Arn
+              - Effect: Allow
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: !GetAtt RevertPolicy.Arn
+              - Effect: Allow
+                Action:
+                  - "sns:Publish"
+                Resource: !Ref AlertTopic
   CloudwatchEventsExecutionRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -233,15 +232,15 @@ Resources:
             Principal:
               Service: events.amazonaws.com
             Action: "sts:AssumeRole"
-        Policies:
-          - PolicyName: StartStepFunctions
-            PolicyDocument:
-              Version: 2012-10-17
-              Statement:
-                - Effect: Allow
-                  Action:
-                    - states:StartExecution
-                  Resource: !Ref StateMachine
+      Policies:
+        - PolicyName: StartStepFunctions
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - states:StartExecution
+                Resource: !Ref StateMachine
 
   IAMEventRule:
     Type: AWS::Events::Rule

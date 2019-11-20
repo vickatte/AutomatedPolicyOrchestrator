@@ -133,65 +133,71 @@ Resources:
             Service:
             - Fn::Sub: states.${AWS::Region}.amazonaws.com
           Action: sts:AssumeRole
+        Policies:
+        - PolicyName: StateMachineTasks
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+            - Effect: Allow
+              Action:
+              - lambda:InvokeFunction
+              Resource:
+                Fn::GetAtt:
+                - ValidatePolicy
+                - Arn
+            - Effect: Allow
+              Action:
+              - lambda:InvokeFunction
+              Resource:
+                Fn::GetAtt:
+                - AskUser
+                - Arn
+            - Effect: Allow
+              Action:
+              - lambda:InvokeFunction
+              Resource:
+                Fn::GetAtt:
+                - RecieveUserAPI
+                - Arn
+            - Effect: Allow
+              Action:
+              - lambda:InvokeFunction
+              Resource:
+                Fn::GetAtt:
+                - PolicyChangerApprove
+                - Arn
+            - Effect: Allow
+              Action:
+              - lambda:InvokeFunction
+              Resource:
+                Fn::GetAtt:
+                - RevertPolicy
+                - Arn
+            - Effect: Allow
+              Action:
+              - sns:Publish
+              Resource:
+                Ref: AlertTopic
+  CloudwatchEventsExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
         - Effect: Allow
           Principal:
             Service: events.amazonaws.com
           Action: sts:AssumeRole
-  StateFunctionExecutionPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      ManagedPolicyName:
-        Fn::Sub: StateFunctionExecutionPolicy
-      Roles:
-      - Ref: StatesExecutionRole
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-        - Effect: Allow
-          Action:
-          - states:StartExecution
-          Resource:
-          - Ref: StateMachine
-        - Effect: Allow
-          Action:
-          - lambda:InvokeFunction
-          Resource:
-            Fn::GetAtt:
-            - ValidatePolicy
-            - Arn
-        - Effect: Allow
-          Action:
-          - lambda:InvokeFunction
-          Resource:
-            Fn::GetAtt:
-            - AskUser
-            - Arn
-        - Effect: Allow
-          Action:
-          - lambda:InvokeFunction
-          Resource:
-            Fn::GetAtt:
-            - RecieveUserAPI
-            - Arn
-        - Effect: Allow
-          Action:
-          - lambda:InvokeFunction
-          Resource:
-            Fn::GetAtt:
-            - PolicyChangerApprove
-            - Arn
-        - Effect: Allow
-          Action:
-          - lambda:InvokeFunction
-          Resource:
-            Fn::GetAtt:
-            - RevertPolicy
-            - Arn
-        - Effect: Allow
-          Action:
-          - sns:Publish
-          Resource:
-            Ref: AlertTopic
+        Policies:
+        - PolicyName: StartStepFunctions
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+            - Effect: Allow
+              Action:
+              - states:StartExecution
+              Resource:
+                Ref: StateMachine
   IAMEventRule:
     Type: AWS::Events::Rule
     Properties:
@@ -211,7 +217,7 @@ Resources:
         Id: StateMachineTarget
         RoleArn:
           Fn::GetAtt:
-          - StatesExecutionRole
+          - CloudwatchEventsExecutionRole
           - Arn
   AlertTopic:
     Type: AWS::SNS::Topic
@@ -221,7 +227,7 @@ Resources:
     Type: AWS::SNS::Subscription
     Properties:
       Endpoint:
-        Ref: restrictedActions
+        Ref: EmailAddress
       Protocol: email
       TopicArn:
         Ref: AlertTopic
