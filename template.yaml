@@ -173,7 +173,7 @@ Resources:
 
             "approved": {
               "Type": "Task",
-              "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${policyChangerApprove}",              
+              "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${PolicyChangerApprove}",              
               "End": true
             }
           }
@@ -236,15 +236,15 @@ Resources:
             Principal:
               Service: events.amazonaws.com
             Action: "sts:AssumeRole"
-        Policies:
-          - PolicyName: StartStepFunctions
-            PolicyDocument:
-              Version: 2012-10-17
-              Statement:
-                - Effect: Allow
-                  Action:
-                    - states:StartExecution
-                  Resource: !Ref StateMachine
+      Policies:
+        - PolicyName: StartStepFunctions
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - states:StartExecution
+                Resource: !Ref StateMachine
 
   IAMEventRule:
     Type: AWS::Events::Rule

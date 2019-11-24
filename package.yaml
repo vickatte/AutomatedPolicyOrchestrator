@@ -18,7 +18,7 @@ Resources:
   RecieveUserAPI:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://policybuildersession/44d608611f420e493d6b6a7517932d36
+      CodeUri: s3://buildersfntwo/78b70a8d7593a3c0331db62ec1afdc00
       Handler: index.handler
       Runtime: nodejs8.10
       Events:
@@ -35,7 +35,17 @@ Resources:
   ValidatePolicy:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://policybuildersession/1c8ae07f97f56d6a7f1cddd245f27d8c
+      CodeUri: s3://buildersfntwo/ef0173067209982c6dc7b015c0fb3ecf
+      Handler: app.handler
+      Runtime: nodejs10.x
+      Environment:
+        Variables:
+          restrictedActions:
+            Ref: restrictedActions
+  PolicyChangerApprove:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://buildersfntwo/8293a4106a95fb9d28fce685ee69841f
       Handler: app.handler
       Runtime: nodejs10.x
       Environment:
@@ -45,7 +55,7 @@ Resources:
   RevertPolicy:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://policybuildersession/0a6daae116d2fce8815788a4d0c94b80
+      CodeUri: s3://buildersfntwo/8b6021bcd4f62cd82b3103b89eb7b52d
       Handler: app.handler
       Runtime: nodejs10.x
       Environment:
@@ -55,7 +65,7 @@ Resources:
   AskUser:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://policybuildersession/65ccfed256cb6313d8e52313b249c5bf
+      CodeUri: s3://buildersfntwo/c9dc9bf23a52cc3f01ebf3f79a0da0c7
       Handler: app.handler
       Runtime: nodejs10.x
       Environment:
@@ -68,16 +78,6 @@ Resources:
             Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/dev/allow
           APIDenyEndpoint:
             Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/dev/deny
-  PolicyChangerApprove:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: s3://policybuildersession/8b7d593701db73da27ae14009b14764b
-      Handler: app.handler
-      Runtime: nodejs10.x
-      Environment:
-        Variables:
-          restrictedActions:
-            Ref: restrictedActions
   StateMachine:
     Type: AWS::StepFunctions::StateMachine
     Properties:
@@ -115,9 +115,9 @@ Resources:
           \         \"Variable\": \"$.taskresult.action\",\n          \"StringEquals\"\
           : \"allow\",\n          \"Next\": \"approved\"\n        }\n      ],\n  \
           \    \"Default\": \"denied\"\n    },\n\n    \"denied\": {\n      \"Type\"\
-          : \"Pass\"\n    },\n\n    \"approved\": {\n      \"Type\": \"Task\",\n \
-          \     \"Resource\": \"arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${policyChangerApprove}\"\
-          ,\n      \"End\": true\n    }\n  }\n}"
+          : \"Pass\",\n      \"End\": true\n    },\n\n    \"approved\": {\n      \"\
+          Type\": \"Task\",\n      \"Resource\": \"arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${PolicyChangerApprove}\"\
+          ,              \n      \"End\": true\n    }\n  }\n}"
       RoleArn:
         Fn::GetAtt:
         - StatesExecutionRole
@@ -188,16 +188,16 @@ Resources:
           Principal:
             Service: events.amazonaws.com
           Action: sts:AssumeRole
-        Policies:
-        - PolicyName: StartStepFunctions
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-            - Effect: Allow
-              Action:
-              - states:StartExecution
-              Resource:
-                Ref: StateMachine
+      Policies:
+      - PolicyName: StartStepFunctions
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Effect: Allow
+            Action:
+            - states:StartExecution
+            Resource:
+              Ref: StateMachine
   IAMEventRule:
     Type: AWS::Events::Rule
     Properties:

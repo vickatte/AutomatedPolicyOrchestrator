@@ -3,8 +3,8 @@
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
-    "author": "Moheeb Zara, Amazon Web Services",
-    "license": "MIT",
+    "author": "Amazon.com, Inc. or its affiliates",
+    "license": "MIT-0",
     "dependencies": {},
     "devDependencies": {}
   }
