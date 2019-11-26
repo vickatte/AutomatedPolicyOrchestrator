@@ -19,8 +19,15 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: s3://buildersfntwo/78b70a8d7593a3c0331db62ec1afdc00
-      Handler: index.handler
-      Runtime: nodejs8.10
+      Handler: app.handler
+      Runtime: nodejs10.x
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - states:SendTaskSuccess
+          Resource: '*'
       Events:
         allow:
           Type: Api
@@ -88,7 +95,7 @@ Resources:
         Statement:
         - Effect: Allow
           Action:
-          - lambda:InvokeFunction
+          - sns:Publish
           Resource: '*'
       Environment:
         Variables:
@@ -97,9 +104,9 @@ Resources:
           Topic:
             Ref: AlertTopic
           APIAllowEndpoint:
-            Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/dev/allow
+            Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/allow
           APIDenyEndpoint:
-            Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/dev/deny
+            Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/deny
   StateMachine:
     Type: AWS::StepFunctions::StateMachine
     Properties:
@@ -127,7 +134,7 @@ Resources:
           \       \"Subject\": \"Policy change detected!\",\n        \"Message.$\"\
           : \"$.taskresult.message\"\n      },\n      \"End\": true\n    },\n\n  \
           \  \"AskUser\":{\n        \"Type\": \"Task\",\n        \"Resource\":\"arn:aws:states:::lambda:invoke.waitForTaskToken\"\
-          ,\n          \"Parameters\":{  \n              \"FunctionName\":\"askUser\"\
+          ,\n          \"Parameters\":{  \n              \"FunctionName\":\"${AskUser}\"\
           ,\n              \"Payload\":{  \n                  \"token.$\":\"$$.Task.Token\"\
           \n                }\n          },\n        \"ResultPath\":\"$.taskresult\"\
           ,\n        \"Next\": \"usersChoice\"\n    },\n\n    \"usersChoice\": {\n\
@@ -262,8 +269,8 @@ Outputs:
   PolicyOrchestratorAPIAllow:
     Description: API Gateway endpoint URL for dev allow function
     Value:
-      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/dev/allow
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/allow
   PolicyOrchestratorAPIDeny:
     Description: API Gateway endpoint URL for dev allow function
     Value:
-      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/dev/deny
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/deny

@@ -20,8 +20,15 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/recieveUser
-      Handler: index.handler
-      Runtime: nodejs8.10
+      Handler: app.handler
+      Runtime: nodejs10.x
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - "states:SendTaskSuccess"
+              Resource: "*"
       Events:
         allow:
           Type: Api
@@ -84,14 +91,25 @@ Resources:
       CodeUri: src/askUser
       Handler: app.handler
       Runtime: nodejs10.x
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - "sns:Publish"
+              Resource: "*"
       Environment:
         Variables:
           restrictedActions: !Ref "restrictedActions"
           Topic: !Ref "AlertTopic"
           APIAllowEndpoint:
-            Fn::Sub: "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/dev/allow"
+            Fn::Sub: "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/allow"
           APIDenyEndpoint:
-            Fn::Sub: "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/dev/deny"
+            Fn::Sub: "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/deny"
+
+
+
+
   StateMachine:
     Type: "AWS::StepFunctions::StateMachine"
     Properties:
@@ -154,7 +172,7 @@ Resources:
                 "Type": "Task",
                 "Resource":"arn:aws:states:::lambda:invoke.waitForTaskToken",
                   "Parameters":{  
-                      "FunctionName":"askUser",
+                      "FunctionName":"${AskUser}",
                       "Payload":{  
                           "token.$":"$$.Task.Token"
                         }
@@ -300,8 +318,8 @@ Outputs:
   PolicyOrchestratorAPIAllow:
     Description: API Gateway endpoint URL for dev allow function
     Value:
-      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/dev/allow
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/allow
   PolicyOrchestratorAPIDeny:
     Description: API Gateway endpoint URL for dev allow function
     Value:
-      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/dev/deny
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/deny
