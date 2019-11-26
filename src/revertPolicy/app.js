@@ -1,4 +1,4 @@
-let restrictedActions = process.env.restrictedActions
+let restrictedActions = process.env.restrictedActions.split(",");
 const AWS = require('aws-sdk')
 var iam = new AWS.IAM({apiVersion: '2010-05-08'});
 exports.handler = async(event, context) => {

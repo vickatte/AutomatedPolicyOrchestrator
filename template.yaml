@@ -12,7 +12,7 @@ Parameters:
     Description: (Required) The email address to notify on policy issues.
   restrictedActions:
     Type: String
-    Default: "['s3:DeleteBucket','s3:DeleteObject']"
+    Default: "s3:DeleteBucket,s3:DeleteObject"
     Description: Restricted policy actions
 
 Resources:
@@ -50,6 +50,13 @@ Resources:
       CodeUri: src/policyChangerApprove
       Handler: app.handler
       Runtime: nodejs10.x
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - "iam:CreatePolicyVersion"
+              Resource: "*"
       Environment:
         Variables:
           restrictedActions: !Ref "restrictedActions"
@@ -60,10 +67,17 @@ Resources:
       CodeUri: src/revertPolicy
       Handler: app.handler
       Runtime: nodejs10.x
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - "iam:CreatePolicyVersion"
+                - "iam:DeletePolicyVersion"
+              Resource: "*"
       Environment:
         Variables:
           restrictedActions: !Ref "restrictedActions"
-
   AskUser:
     Type: AWS::Serverless::Function
     Properties:
@@ -214,11 +228,14 @@ Resources:
               - Effect: Allow
                 Action:
                   - "lambda:InvokeFunction"
+                  - "iam:CreatePolicyVersion"
                 Resource: !GetAtt PolicyChangerApprove.Arn
 
               - Effect: Allow
                 Action:
                   - "lambda:InvokeFunction"
+                  - "iam:CreatePolicyVersion"
+                  - "iam:DeletePolicyVersion"
                 Resource: !GetAtt RevertPolicy.Arn
 
               - Effect: Allow
@@ -249,13 +266,15 @@ Resources:
   IAMEventRule:
     Type: AWS::Events::Rule
     Properties:
-      Description: "EventRule"
+      Description: "NewPolicyCreated"
       EventPattern:
+        source: 
+          - "aws.iam"
         detail-type:
           - "AWS API Call via CloudTrail"
         detail:
           eventSource:
-            - cloudtrail.amazonaws.com
+            - iam.amazonaws.com
           eventName:
             - CreatePolicy
       State: "ENABLED"

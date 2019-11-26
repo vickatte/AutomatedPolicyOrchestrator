@@ -12,7 +12,7 @@ Parameters:
     Description: (Required) The email address to notify on policy issues.
   restrictedActions:
     Type: String
-    Default: '[''s3:DeleteBucket'',''s3:DeleteObject'']'
+    Default: s3:DeleteBucket,s3:DeleteObject
     Description: Restricted policy actions
 Resources:
   RecieveUserAPI:
@@ -35,7 +35,7 @@ Resources:
   ValidatePolicy:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://buildersfntwo/ef0173067209982c6dc7b015c0fb3ecf
+      CodeUri: s3://buildersfntwo/863326840d5c104124f4eb1e90bc7f94
       Handler: app.handler
       Runtime: nodejs10.x
       Environment:
@@ -45,9 +45,16 @@ Resources:
   PolicyChangerApprove:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://buildersfntwo/8293a4106a95fb9d28fce685ee69841f
+      CodeUri: s3://buildersfntwo/9a1ec08f2eba17d6e3b67a571ba1308c
       Handler: app.handler
       Runtime: nodejs10.x
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - iam:CreatePolicyVersion
+          Resource: '*'
       Environment:
         Variables:
           restrictedActions:
@@ -55,9 +62,17 @@ Resources:
   RevertPolicy:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://buildersfntwo/8b6021bcd4f62cd82b3103b89eb7b52d
+      CodeUri: s3://buildersfntwo/dc090182dab8913d2f7c340e12426fed
       Handler: app.handler
       Runtime: nodejs10.x
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - iam:CreatePolicyVersion
+          - iam:DeletePolicyVersion
+          Resource: '*'
       Environment:
         Variables:
           restrictedActions:
@@ -68,6 +83,13 @@ Resources:
       CodeUri: s3://buildersfntwo/c9dc9bf23a52cc3f01ebf3f79a0da0c7
       Handler: app.handler
       Runtime: nodejs10.x
+      Policies:
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - lambda:InvokeFunction
+          Resource: '*'
       Environment:
         Variables:
           restrictedActions:
@@ -162,6 +184,7 @@ Resources:
           - Effect: Allow
             Action:
             - lambda:InvokeFunction
+            - iam:CreatePolicyVersion
             Resource:
               Fn::GetAtt:
               - PolicyChangerApprove
@@ -169,6 +192,8 @@ Resources:
           - Effect: Allow
             Action:
             - lambda:InvokeFunction
+            - iam:CreatePolicyVersion
+            - iam:DeletePolicyVersion
             Resource:
               Fn::GetAtt:
               - RevertPolicy
@@ -201,13 +226,15 @@ Resources:
   IAMEventRule:
     Type: AWS::Events::Rule
     Properties:
-      Description: EventRule
+      Description: NewPolicyCreated
       EventPattern:
+        source:
+        - aws.iam
         detail-type:
         - AWS API Call via CloudTrail
         detail:
           eventSource:
-          - cloudtrail.amazonaws.com
+          - iam.amazonaws.com
           eventName:
           - CreatePolicy
       State: ENABLED

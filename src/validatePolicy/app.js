@@ -1,4 +1,4 @@
-let restrictedActions = JSON.parse(process.env.restrictedActions)
+let restrictedActions = process.env.restrictedActions.split(",");
 let message = ""
 let action = ""
 
