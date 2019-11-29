@@ -95,7 +95,7 @@ Invokes the ValidatePolicy Lambda that checkes the new policy document against t
 "ValidatePolicy": {
     "Type": "Task",
     "ResultPath":"$.taskresult",
-    "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ValidatePolicy}",
+    "Resource": "{Replace-This-With-ValidatePolicy-Arn}",
     "Next": "ChooseAction"
 },
 ```
@@ -106,7 +106,7 @@ Creates a new default version of the policy with only Log permissions and delete
 "TempRemove": {
     "Type": "Task",
     "ResultPath":"$.taskresult",
-    "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${RevertPolicy}",
+    "Resource": "{Replace-This-With-{RevertPolicy-Arn}",
     "Next": "AskUser"
 },
 ```
@@ -158,7 +158,7 @@ No restricted actions detected, user is still notificed of change (via SNS email
     "Type": "Task",
     "Resource": "arn:aws:states:::sns:publish",
     "Parameters": {
-        "TopicArn": "${AlertTopic}",
+        "TopicArn": "{Replace-This-With-{AlertTopic-Arn}",
         "Subject": "Policy change detected!",
         "Message.$": "$.taskresult.message"
     },
@@ -218,7 +218,7 @@ Restore innitial policy document by creating as a new version:
 ```bash
 "approved": {
     "Type": "Task",
-    "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${policyChangerApprove}",
+    "Resource": "{Replace-This-With-{AlertTopic-Arn}",
     "TimeoutSeconds": 3600,
     "End": true
 }
