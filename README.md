@@ -199,7 +199,7 @@ Restore innitial policy document by creating as a new version:
 ```bash
 "approved": {
     "Type": "Task",
-    "Resource": "{Replace-This-With-{AlertTopic-Arn}",
+    "Resource": "{Replace-This-With-{PolicyChangerApproveARN}",
     "TimeoutSeconds": 3600,
     "End": true
 }
