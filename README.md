@@ -131,26 +131,7 @@ Choice state, branches depending on input from ValidatePolicy step:
     "Default": "AllowWithNotification"
 },
 ```
-#### AllowWithNotification
-Choice state, branches depending on input from ValidatePolicy step:
-```bash
-"ChooseAction": {
-    "Type" : "Choice",
-    "Choices": [
-        {
-        "Variable": "$.taskresult.action",
-        "StringEquals": "remedy",
-        "Next": "TempRemove"
-        },
-        {
-        "Variable": "$.taskresult.action",
-        "StringEquals": "alert",
-        "Next": "AllowWithNotification"
-        }
-    ],
-    "Default": "AllowWithNotification"
-},
-```
+
 #### AllowWithNotification
 No restricted actions detected, user is still notificed of change (via SNS email) then executions ends:
 ```bash

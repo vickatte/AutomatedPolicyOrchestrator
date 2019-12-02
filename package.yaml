@@ -112,41 +112,9 @@ Resources:
     Properties:
       DefinitionString:
         Fn::Sub: "{\n  \"Comment\": \"Defect detection state machine\",\n  \"StartAt\"\
-          : \"ModifyState\",\n  \"States\": {\n    \"ModifyState\": {\n      \"Type\"\
-          : \"Pass\",\n      \"Parameters\": {\n        \"policy.$\": \"$.detail.requestParameters.policyDocument\"\
-          ,\n        \"accountId.$\": \"$.detail.userIdentity.accountId\",\n     \
-          \   \"region.$\": \"$.region\",\n        \"policyMeta.$\":\"$.detail.responseElements.policy\"\
-          \n      },\n      \"ResultPath\": \"$\",\n      \"Next\": \"ValidatePolicy\"\
-          \n    },\n    \"ValidatePolicy\": {\n      \"Type\": \"Task\",\n      \"\
-          ResultPath\":\"$.taskresult\",\n      \"Resource\": \"arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ValidatePolicy}\"\
-          ,\n      \"Next\": \"ChooseAction\"\n    },\n    \"TempRemove\": {\n   \
-          \   \"Type\": \"Task\",\n      \"ResultPath\":\"$.taskresult\",\n      \"\
-          Resource\": \"arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${RevertPolicy}\"\
-          ,\n      \"Next\": \"AskUser\"\n    },\n    \"ChooseAction\": {\n      \"\
-          Type\" : \"Choice\",\n      \"Choices\": [\n        {\n          \"Variable\"\
-          : \"$.taskresult.action\",\n          \"StringEquals\": \"remedy\",\n  \
-          \        \"Next\": \"TempRemove\"\n        },\n        {\n          \"Variable\"\
-          : \"$.taskresult.action\",\n          \"StringEquals\": \"alert\",\n   \
-          \       \"Next\": \"AllowWithNotification\"\n        }\n      ],\n     \
-          \ \"Default\": \"AllowWithNotification\"\n    },\n    \"AllowWithNotification\"\
-          : {\n      \"Type\": \"Task\",\n      \"Resource\": \"arn:aws:states:::sns:publish\"\
-          ,\n      \"Parameters\": {\n        \"TopicArn\": \"${AlertTopic}\",\n \
-          \       \"Subject\": \"Policy change detected!\",\n        \"Message.$\"\
-          : \"$.taskresult.message\"\n      },\n      \"End\": true\n    },\n\n  \
-          \  \"AskUser\":{\n        \"Type\": \"Task\",\n        \"Resource\":\"arn:aws:states:::lambda:invoke.waitForTaskToken\"\
-          ,\n          \"Parameters\":{  \n              \"FunctionName\":\"${AskUser}\"\
-          ,\n              \"Payload\":{  \n                  \"token.$\":\"$$.Task.Token\"\
-          \n                }\n          },\n        \"ResultPath\":\"$.taskresult\"\
-          ,\n        \"Next\": \"usersChoice\"\n    },\n\n    \"usersChoice\": {\n\
-          \      \"Type\" : \"Choice\",\n      \"Choices\": [\n        {\n       \
-          \   \"Variable\": \"$.taskresult.action\",\n          \"StringEquals\":\
-          \ \"delete\",\n          \"Next\": \"denied\"\n        },\n        {\n \
-          \         \"Variable\": \"$.taskresult.action\",\n          \"StringEquals\"\
-          : \"allow\",\n          \"Next\": \"approved\"\n        }\n      ],\n  \
-          \    \"Default\": \"denied\"\n    },\n\n    \"denied\": {\n      \"Type\"\
-          : \"Pass\",\n      \"End\": true\n    },\n\n    \"approved\": {\n      \"\
-          Type\": \"Task\",\n      \"Resource\": \"arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${PolicyChangerApprove}\"\
-          ,              \n      \"End\": true\n    }\n  }\n}"
+          : \"example\",\n  \"States\": {\n    \"example\": {\n      \"Type\": \"\
+          Pass\",\n      \"ResultPath\": \"$\",\n      \"End\": true\n    }\n  }\n\
+          }"
       RoleArn:
         Fn::GetAtt:
         - StatesExecutionRole
@@ -262,7 +230,7 @@ Resources:
     Properties:
       Endpoint:
         Ref: EmailAddress
-      Protocol: email
+      Protocol: Email-JSON
       TopicArn:
         Ref: AlertTopic
 Outputs:
