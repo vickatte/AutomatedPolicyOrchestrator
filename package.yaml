@@ -133,8 +133,8 @@ Resources:
           ,\n      \"Parameters\": {\n        \"TopicArn\": \"${AlertTopic}\",\n \
           \       \"Subject\": \"Policy change detected!\",\n        \"Message.$\"\
           : \"$.taskresult.message\"\n      },\n      \"End\": true\n    },\n    \"\
-          AskUser\":{\n        \"Type\": \"Task\",\n        \"Resource\":\"arn:aws:states:::lambda:invoke.waitForTaskToken\"\
-          ,\n          \"Parameters\":{  \n              \"FunctionName\":\"askUser\"\
+          AskUser\":{\n        \"Type\": \"Task\",\n        \"Resource\": \"arn:aws:states:::lambda:invoke.waitForTaskToken\"\
+          ,\n          \"Parameters\":{  \n              \"FunctionName\": \"${AskUser}\"\
           ,\n              \"Payload\":{  \n                  \"token.$\":\"$$.Task.Token\"\
           \n                }\n          },\n        \"ResultPath\":\"$.taskresult\"\
           ,\n        \"Next\": \"usersChoice\"\n    },\n    \"usersChoice\": {\n \

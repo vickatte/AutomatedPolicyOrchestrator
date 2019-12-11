@@ -169,9 +169,9 @@ Resources:
             },
             "AskUser":{
                 "Type": "Task",
-                "Resource":"arn:aws:states:::lambda:invoke.waitForTaskToken",
+                "Resource": "arn:aws:states:::lambda:invoke.waitForTaskToken",
                   "Parameters":{  
-                      "FunctionName":"askUser",
+                      "FunctionName": "${AskUser}",
                       "Payload":{  
                           "token.$":"$$.Task.Token"
                         }
