@@ -22,9 +22,7 @@ This is a SAM template for an Automated policy orchestrator - Below is an explan
 
 ##### Option 1: Deploy from the Serverless application repository (preferred)
 
-[![button](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/serverlessrepo/home?region=us-east-1#/available-applications)
-
- :lock:**NOTE**: Note This is a private applicaiton in the Serverless Applicaiton Repository (SAR), in order to deploy from SAR You must have been granted access.
+[![button](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/lambda/home?region=us-east-1#/create/app?applicationId=arn:aws:serverlessrepo:us-east-1:981723798357:applications/Automated-IAM-policy-alerts-and-approvals)
 
 ---
 
