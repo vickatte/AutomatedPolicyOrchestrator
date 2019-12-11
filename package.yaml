@@ -18,7 +18,7 @@ Resources:
   RecieveUserAPI:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://buildersfntwo/78b70a8d7593a3c0331db62ec1afdc00
+      CodeUri: s3://buildersfntwo/83430a5dd755f3b78c678ab2933eae4e
       Handler: app.handler
       Runtime: nodejs10.x
       Policies:
@@ -42,7 +42,7 @@ Resources:
   ValidatePolicy:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://buildersfntwo/863326840d5c104124f4eb1e90bc7f94
+      CodeUri: s3://buildersfntwo/dcc1bbc7a0055817b21011558e9a463d
       Handler: app.handler
       Runtime: nodejs10.x
       Environment:
@@ -52,7 +52,7 @@ Resources:
   PolicyChangerApprove:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://buildersfntwo/9a1ec08f2eba17d6e3b67a571ba1308c
+      CodeUri: s3://buildersfntwo/efc434bb7b42bd3f638c7545cfd9ef1a
       Handler: app.handler
       Runtime: nodejs10.x
       Policies:
@@ -69,7 +69,7 @@ Resources:
   RevertPolicy:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://buildersfntwo/dc090182dab8913d2f7c340e12426fed
+      CodeUri: s3://buildersfntwo/4ba0ca43040114bda632fce66a208018
       Handler: app.handler
       Runtime: nodejs10.x
       Policies:
@@ -87,7 +87,7 @@ Resources:
   AskUser:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://buildersfntwo/c9dc9bf23a52cc3f01ebf3f79a0da0c7
+      CodeUri: s3://buildersfntwo/ec1a0f73dff9141c742f2275636556f4
       Handler: app.handler
       Runtime: nodejs10.x
       Policies:
@@ -112,9 +112,41 @@ Resources:
     Properties:
       DefinitionString:
         Fn::Sub: "{\n  \"Comment\": \"Defect detection state machine\",\n  \"StartAt\"\
-          : \"example\",\n  \"States\": {\n    \"example\": {\n      \"Type\": \"\
-          Pass\",\n      \"ResultPath\": \"$\",\n      \"End\": true\n    }\n  }\n\
-          }"
+          : \"ModifyState\",\n  \"States\": {\n    \"ModifyState\": {\n      \"Type\"\
+          : \"Pass\",\n      \"Parameters\": {\n        \"policy.$\": \"$.detail.requestParameters.policyDocument\"\
+          ,\n        \"accountId.$\": \"$.detail.userIdentity.accountId\",\n     \
+          \   \"region.$\": \"$.region\",\n        \"policyMeta.$\":\"$.detail.responseElements.policy\"\
+          \n      },\n      \"ResultPath\": \"$\",\n      \"Next\": \"ValidatePolicy\"\
+          \n    },\n    \"ValidatePolicy\": {\n      \"Type\": \"Task\",\n      \"\
+          ResultPath\":\"$.taskresult\",\n      \"Resource\": \"arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ValidatePolicy}\"\
+          ,\n      \"Next\": \"ChooseAction\"\n    },\n    \"TempRemove\": {\n   \
+          \   \"Type\": \"Task\",\n      \"ResultPath\":\"$.taskresult\",\n      \"\
+          Resource\": \"arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${RevertPolicy}\"\
+          ,\n      \"Next\": \"AskUser\"\n    },\n    \"ChooseAction\": {\n      \"\
+          Type\" : \"Choice\",\n      \"Choices\": [\n        {\n          \"Variable\"\
+          : \"$.taskresult.action\",\n          \"StringEquals\": \"remedy\",\n  \
+          \        \"Next\": \"TempRemove\"\n        },\n        {\n          \"Variable\"\
+          : \"$.taskresult.action\",\n          \"StringEquals\": \"alert\",\n   \
+          \       \"Next\": \"AllowWithNotification\"\n        }\n      ],\n     \
+          \ \"Default\": \"AllowWithNotification\"\n    },\n    \"AllowWithNotification\"\
+          : {\n      \"Type\": \"Task\",\n      \"Resource\": \"arn:aws:states:::sns:publish\"\
+          ,\n      \"Parameters\": {\n        \"TopicArn\": \"${AlertTopic}\",\n \
+          \       \"Subject\": \"Policy change detected!\",\n        \"Message.$\"\
+          : \"$.taskresult.message\"\n      },\n      \"End\": true\n    },\n    \"\
+          AskUser\":{\n        \"Type\": \"Task\",\n        \"Resource\":\"arn:aws:states:::lambda:invoke.waitForTaskToken\"\
+          ,\n          \"Parameters\":{  \n              \"FunctionName\":\"askUser\"\
+          ,\n              \"Payload\":{  \n                  \"token.$\":\"$$.Task.Token\"\
+          \n                }\n          },\n        \"ResultPath\":\"$.taskresult\"\
+          ,\n        \"Next\": \"usersChoice\"\n    },\n    \"usersChoice\": {\n \
+          \     \"Type\" : \"Choice\",\n      \"Choices\": [\n        {\n        \
+          \  \"Variable\": \"$.taskresult.action\",\n          \"StringEquals\": \"\
+          delete\",\n          \"Next\": \"denied\"\n        },\n        {\n     \
+          \     \"Variable\": \"$.taskresult.action\",\n          \"StringEquals\"\
+          : \"allow\",\n          \"Next\": \"approved\"\n        }\n      ],\n  \
+          \    \"Default\": \"denied\"\n    },\n    \"denied\": {\n      \"Type\"\
+          : \"Pass\",\n      \"End\": true\n    },\n    \"approved\": {\n      \"\
+          Type\": \"Task\",\n      \"Resource\": \"arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${PolicyChangerApprove}\"\
+          ,              \n      \"End\": true\n    }\n  }\n}"
       RoleArn:
         Fn::GetAtt:
         - StatesExecutionRole
