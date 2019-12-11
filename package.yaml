@@ -87,7 +87,7 @@ Resources:
   AskUser:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://buildersfntwo/9015ae0972566aaf373cbf748816c47c
+      CodeUri: s3://buildersfntwo/f4472b1796688507cc1b87092f395a06
       Handler: app.handler
       Runtime: nodejs10.x
       Policies:
