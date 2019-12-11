@@ -90,7 +90,7 @@ Re-structures the input data into a more usable format:
 ```
 
 #### ValidatePolicy
-Invokes the ValidatePolicy Lambda that checkes the new policy document against the rescricted actions:
+Invokes the ValidatePolicy Lambda that checks the new policy document against the restricted actions:
 ```bash
 "ValidatePolicy": {
     "Type": "Task",
@@ -133,7 +133,7 @@ Choice state, branches depending on input from ValidatePolicy step:
 ```
 
 #### AllowWithNotification
-No restricted actions detected, user is still notificed of change (via SNS email) then executions ends:
+No restricted actions detected, user is still notified of change (via SNS email) then executions ends:
 ```bash
 "AllowWithNotification": {
     "Type": "Task",
@@ -186,7 +186,7 @@ Branch based on user's approval/deny action:
 ```
 
 #### denied
-User dennied policy creation, end execution with no further action:
+User denied  policy creation, end execution with no further action:
 ```bash
  "denied": {
     "Type": "Pass",
@@ -195,7 +195,7 @@ User dennied policy creation, end execution with no further action:
 ```
 
 #### Approved
-Restore innitial policy document by creating as a new version:
+Restore initial  policy document by creating as a new version:
 ```bash
 "approved": {
     "Type": "Task",
