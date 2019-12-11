@@ -11,22 +11,23 @@ exports.handler = async(event, context) => {
       SetAsDefault: true
     };
 
-    await iam.createPolicyVersion(params, function(err, data) {
-      if (err)
-        return(err, err.stack); // an error occurred
-    }).promise()
-    
-    
+    try {
+      const res = await iam.createPolicyVersion(params).promise()
+    }catch(err){
+      console.error(err)
+    }
     
     //Delete the restricted policy version
     var params = {
       PolicyArn: event.policyMeta.arn, /* required */
       VersionId: event.policyMeta.defaultVersionId /* required */
     };
-    iam.deletePolicyVersion(params, function(err, data) {
-      if (err) console.log(err, err.stack); // an error occurred
-      else     console.log(data);           // successful response
-    });
+
+    try {
+      const res = await iam.deletePolicyVersion(params).promise()
+    }catch(err){
+      console.error(err)
+    }
 
     return {
       "message": `Policy ${event.policyMeta.policyName} Has been altered and contains restricted Actions: ${event.policy}, please approve or deny this change`,

@@ -9,10 +9,11 @@ exports.handler = async (event,context) => {
                     TopicArn: process.env.Topic,
                     Message: 'A restricted Policy change has been detected   ####################   Approve  '+process.env.APIAllowEndpoint+'?token='+JSON.stringify(event.token) +'  ####################   Or Deny  '+process.env.APIDenyEndpoint+'?token='+JSON.stringify(event.token) 
                 }
-    await sns.publish(params, function(err, data) {
-    if(err) 
-        console.error('error publishing to SNS');
-    }).promise();
+    try {
+        const res = sns.publish(params)
+    }catch(err){
+        console.error(err)
+    }         
 
 return event;
 

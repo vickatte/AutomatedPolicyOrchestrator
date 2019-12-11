@@ -11,10 +11,11 @@ exports.handler = async(event, context) => {
       SetAsDefault: true
     };
 
-    await iam.createPolicyVersion(params, function(err, data) {
-      if (err)
-        return(err, err.stack); // an error occurred
-    }).promise()
+    try {
+      const res = await iam.createPolicyVersion(params).promise()
+    }catch(err){
+      console.error(err)
+    }
     
     return {
       "message": `Policy ${event.policyMeta.policyName} Has been approved ${event.policy} `,

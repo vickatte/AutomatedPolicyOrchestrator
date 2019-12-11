@@ -19,12 +19,13 @@ console.log(event)
         taskToken: taskTokenClean
     }
     
-    await stepfunctions.sendTaskSuccess(params, (err, data) => {
-        if (err)
-            console.error(err.message);
-    }).promise();
-    
 
+    try {
+        const res = await stepfunctions.sendTaskSuccess(params).promise()
+    }catch(err){
+        console.error(err)
+    }         
+    
    return {
         statusCode: '200',
         body: JSON.stringify({action:NextAction}),
